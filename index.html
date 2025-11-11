@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Nikool!</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- FIX 3: Brighter Color Palette --- */
+        :root {
+            --bg-gradient-start: #2a5a8a; /* Brighter blue center */
+            --bg-gradient-end: #1f2a3a;   /* Lighter dark-blue-gray edge */
+            --card-bg: #2a3a4a;           /* Brighter card background */
+            --font-main: #f0f0f0;
+            --font-secondary: #c0c0c0;   /* Brighter secondary text */
+            --accent-main: #00bfff;
+            --accent-hover: #40cfff;
+            --border-color: #3a4a5a;       /* Lighter border */
+        }
+
+        /* --- Styled Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-gradient-end);
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--accent-main);
+            border-radius: 20px;
+            border: 2px solid var(--bg-gradient-end);
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 70%);
+            color: var(--font-main);
+            margin: 0;
+        }
+
+        .hero-header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 191, 255, 0.5), 0 0 5px rgba(0, 191, 255, 0.7);
+        }
+        
+        .hero-header p {
+            font-size: 1.3rem;
+            color: var(--font-secondary);
+        }
+
+        .scroll-track {
+            height: 100vh;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: var(--bg-gradient-end);
+        }
+
+        /* --- FIX 1: Clickable Item Fix --- */
+        .scroll-item {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            width: 90%;
+            text-align: center;
+            /* Makes invisible items un-clickable */
+            pointer-events: none;
+            visibility: hidden;
+        }
+        
+        .scroll-item.visible {
+            opacity: 1;
+            /* Makes *only* the visible item clickable */
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        /* --- 1. Quote Image Scroll Section --- */
+        .quote-image {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+
+        /* --- 2. Audio Scroll Section --- */
+        .main-content {
+            background-color: #1f2a3a; /* Match edge background */
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            margin: 0 auto;
+            max-width: 900px;
+            padding: 40px 20px;
+        }
+        
+        .main-content h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            border-bottom: 3px solid var(--accent-main);
+            padding-bottom: 10px;
+            text-align: center;
+            color: var(--font-main);
+            margin-top: 0;
+        }
+
+        .audio-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        
+        .audio-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-main);
+        }
+
+        .audio-card p {
+            margin: 0 0 15px 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-main);
+        }
+
+        audio {
+            width: 100%;
+            border-radius: 6px;
+        }
+
+        /* --- FIX 2: Styled Audio Player (WebKit/Blink) --- */
+        audio::-webkit-media-controls-panel {
+            background-color: var(--card-bg); /* Match the card */
+        }
+        
+        audio::-webkit-media-controls-timeline {
+            background-color: var(--bg-gradient-end); /* Darker track */
+            border-radius: 4px;
+            margin: 0 10px;
+        }
+        
+        audio::-webkit-media-controls-play-button,
+        audio::-webkit-media-controls-volume-slider,
+        audio::-webkit-media-controls-mute-button {
+            /* We can't easily change the color, but we can add hover effects */
+            border-radius: 50%;
+        }
+        
+        audio::-webkit-media-controls-play-button:hover,
+        audio::-webkit-media-controls-mute-button:hover {
+             background-color: rgba(255,255,255,0.2);
+        }
+        
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: var(--font-secondary);
+        }
+        /* --- End of Audio Player Style --- */
+        
+        
+        /* --- 3. "Dongey" Final Reveal --- */
+        .dongey-reveal {
+            font-size: 5rem;
+            font-weight: 900;
+            font-style: italic;
+            color: var(--accent-main);
+            text-shadow: 0 0 15px rgba(0, 191, 255, 0.5), 0 0 5px rgba(0, 191, 255, 0.7);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="hero-header">
+        <h1>Happy Birthday Nikool!</h1>
+        <p>Scroll down to see what we made for you...</p>
+        <p style="font-size: 2.5rem; margin-top: 20px;">&darr;</p>
+    </header>
+
+    <div id="quote-container">
+        <section id="quote-track" class="scroll-track">
+            <div class="scroll-item visible">
+                <img src="/image.png" alt="Quote 1" class="quote-image">
+            </div>
+            <div class="scroll-item">
+                <img src="/image2.png" alt="Quote 2" class="quote-image">
+            </div>
+            <div class="scroll-item">
+                <img src="/image3.png" alt="Quote 3" class="quote-image">
+            </div>
+            <div class="scroll-item">
+                <img src="/image4.png" alt="Quote 4" class="quote-image">
+            </div>
+        </section>
+    </div>
+
+    <div class="main-content">
+        <h2>Messages from the Crew</h2>
+    </div>
+
+    <div id="audio-container">
+        <section id="audio-track" class="scroll-track">
+
+            <div class="scroll-item visible">
+                <div class="audio-card">
+                    <p>From: Saran</p>
+                    <audio controls src="https://files.catbox.moe/x7f1ee.m4a"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Srivas</p>
+                    <audio controls src="https://files.catbox.moe/5852km.mp3"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Suhaas</p>
+                    <audio controls src="https://files.catbox.moe/q3dep0.ogg"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Teja</p>
+                    <audio controls src="https://files.catbox.moe/he5h41.ogg"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Thoshan</p>
+                    <audio controls src="https://files.catbox.moe/pzm0r6.m4a"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Varshith</p>
+                    <audio controls src="https://files.catbox.moe/5laqj8.m4a"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Abhineeth</p>
+                    <audio controls src="https://files.catbox.moe/yqn3ze.mp3"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Ash</p>
+                    <audio controls src="https://files.catbox.moe/6ot7fh.m4a"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Pranav</p>
+                    <audio controls src="https://files.catbox.moe/hx5ip0.mp3"></audio>
+                </div>
+            </div>
+            <div class="scroll-item">
+                <div class="audio-card">
+                    <p>From: Sabbu</p>
+                    <audio controls src="https://files.catbox.moe/3ngtgv.ogg"></audio>
+                </div>
+            </div>
+            <div class="scroll-item dongey-reveal">
+                Dongey
+            </div>
+
+        </section>
+    </div>
+
+
+    <script>
+        function setupScrollReveal(containerId, trackId, itemClass) {
+            const container = document.getElementById(containerId);
+            const track = document.getElementById(trackId);
+            const items = track.querySelectorAll(itemClass);
+            const totalItems = items.length;
+            
+            if (!container || !track || totalItems === 0) return;
+
+            container.style.height = `${totalItems * 100}vh`;
+            
+            let lastActiveIndex = 0;
+
+            function handleScroll() {
+                const containerTop = container.offsetTop;
+                const containerHeight = container.offsetHeight;
+                const windowHeight = window.innerHeight;
+                const scrollableHeight = containerHeight - windowHeight;
+                const scrollPositionInContainer = window.scrollY - containerTop;
+
+                if (scrollPositionInContainer < 0 || scrollPositionInContainer > scrollableHeight) {
+                    if (scrollPositionInContainer < 0 && lastActiveIndex === 0 && items[0].classList.contains('visible')) {
+                        items[0].classList.remove('visible');
+                    }
+                    return;
+                }
+
+                const scrollFraction = scrollPositionInContainer / scrollableHeight;
+                let activeIndex = Math.floor(scrollFraction * totalItems);
+                activeIndex = Math.max(0, Math.min(activeIndex, totalItems - 1));
+
+                if (activeIndex !== lastActiveIndex) {
+                    items[lastActiveIndex].classList.remove('visible');
+                    items[activeIndex].classList.add('visible');
+                    lastActiveIndex = activeIndex;
+                }
+            }
+            
+            window.addEventListener('scroll', handleScroll);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupScrollReveal('quote-container', 'quote-track', '.scroll-item');
+            setupScrollReveal('audio-container', 'audio-track', '.scroll-item');
+
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#00bfff', '#40cfff', '#FFFFFF', '#f0f0f0']
+            });
+        });
+    </script>
+
+</body>
+</html>
